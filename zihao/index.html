@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEPHYR 李梓豪 | MODYSSEY</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --main-black: #080808;
+            --card-dark: rgba(26, 26, 26, 0.6);
+            --accent-purple: #9D72FF;
+            --accent-glow: rgba(157, 114, 255, 0.3);
+            --light-gray: #E0E0E0;
+            --text-mute: #999;
+            --border-glow: linear-gradient(135deg, #9D72FF, #00D2FF);
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 10px rgba(157, 114, 255, 0.2); }
+            100% { text-shadow: 0 0 25px rgba(157, 114, 255, 0.6), 0 0 5px #fff; }
+        }
+
+        body {
+            background-color: var(--main-black);
+            background: radial-gradient(circle at 50% 50%, #1a1425 0%, #080808 100%);
+            background-attachment: fixed;
+            color: var(--light-gray);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: var(--accent-purple);
+            filter: blur(150px);
+            opacity: 0.15;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(8, 8, 8, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(157, 114, 255, 0.2);
+        }
+
+        .nav-logo {
+            font-size: 22px;
+            font-weight: 900;
+            background: var(--border-glow);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 22px;
+        }
+
+        .nav-links a {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-purple);
+        }
+
+        .hero-banner {
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.8)), url('banner.jpg') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            margin-top: 60px;
+        }
+
+        .hero-title {
+            font-size: clamp(30px, 8vw, 60px);
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 15px;
+            letter-spacing: 4px;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        .hero-sub {
+            font-size: 16px;
+            color: var(--accent-purple);
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .hero-slogan {
+            font-size: 14px;
+            color: var(--text-mute);
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .hero-info {
+            margin: 10px 0 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .hero-info span {
+            padding: 6px 14px;
+            background: var(--glass);
+            border: 1px solid rgba(157, 114, 255, 0.4);
+            border-radius: 20px;
+            font-size: 13px;
+            backdrop-filter: blur(5px);
+        }
+
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .quick-btn {
+            padding: 11px 26px;
+            border: 1px solid var(--accent-purple);
+            background: rgba(157, 114, 255, 0.1);
+            color: #fff;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.4s;
+        }
+
+        .quick-btn:hover {
+            background: var(--accent-purple);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .section {
+            padding: 70px 6%;
+            max-width: 1100px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .section.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 26px;
+            margin-bottom: 45px;
+            text-align: center;
+            position: relative;
+            letter-spacing: 2px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 3px;
+            background: var(--accent-purple);
+            box-shadow: 0 0 10px var(--accent-purple);
+            border-radius: 2px;
+        }
+
+        .about-wrap {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 35px;
+            background: var(--card-dark);
+            padding: 35px;
+            border-radius: 22px;
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .about-basic p {
+            margin-bottom: 11px;
+            font-size: 15px;
+        }
+
+        .about-basic span {
+            color: var(--accent-purple);
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .about-story {
+            background: rgba(157, 114, 255, 0.05);
+            padding: 25px;
+            border-radius: 16px;
+            border-left: 4px solid var(--accent-purple);
+        }
+
+        .about-story h3 {
+            color: var(--accent-purple);
+            margin-bottom: 12px;
+            font-size: 17px;
+        }
+
+        .card-slider {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            padding: 15px 0;
+        }
+
+                .slider-card {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: #111;
+            background-size: cover; /* 确保背景图铺满 */
+            background-position: center;
+            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-decoration: none; /* 移除链接下划线 */
+        }
+
+        .slider-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: inherit; /* 关键：继承父级的背景图 */
+            opacity: 0.7;
+            filter: grayscale(0.4);
+            transition: 0.5s;
+            z-index: 1;
+        }
+
+        .card-caption {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            font-size: 13px;
+            text-align: center;
+            color: #fff;
+            z-index: 2; /* 确保文字在背景之上 */
+        }
+
+        .slider-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -150%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-25deg);
+            transition: 0.8s;
+        }
+
+        .card-slider:hover .slider-card {
+            opacity: 0.4;
+            transform: scale(0.95);
+            filter: blur(2px);
+        }
+
+        .slider-card:hover {
+            opacity: 1 !important;
+            transform: scale(1.1) translateY(-10px) !important;
+            filter: blur(0) !important;
+            z-index: 10;
+            border-color: var(--accent-purple);
+            box-shadow: 0 15px 40px rgba(157, 114, 255, 0.4);
+        }
+
+        .slider-card:hover::before {
+            opacity: 1;
+            filter: grayscale(0);
+        }
+
+        .slider-card:hover::after {
+            left: 150%;
+        }
+
+        .card-caption {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            font-size: 13px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .card-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-dark);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 25px rgba(157, 114, 255, 0.25);
+            border-color: var(--accent-purple);
+        }
+
+        .card img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 18px;
+        }
+
+        .card-title-sm {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--light-gray);
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-mute);
+            margin-bottom: 12px;
+        }
+
+        .card-link {
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .news-item {
+            background: var(--card-dark);
+            padding: 20px;
+            border-radius: 15px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid transparent;
+        }
+
+        .news-item:hover {
+            background: rgba(157, 114, 255, 0.05);
+            border-color: rgba(157, 114, 255, 0.3);
+            transform: translateX(8px);
+        }
+
+        .news-date {
+            background: var(--accent-purple);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .direct-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .direct-box {
+            background: var(--card-dark);
+            border-radius: 14px;
+            padding: 22px;
+            border: 1px solid transparent;
+            transition: 0.3s ease;
+        }
+
+        .direct-box:hover {
+            border-color: var(--accent-purple);
+        }
+
+        .direct-box h3 {
+            color: var(--accent-purple);
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .direct-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .direct-list li a {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .direct-list li a:hover {
+            color: var(--accent-purple);
+        }
+
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            border-top: 1px solid rgba(157,114,255,0.1);
+            margin-top: 30px;
+        }
+
+        .footer-copy {
+            font-size: 12px;
+            color: var(--text-mute);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 992px) {
+            .about-wrap { grid-template-columns: 1fr; }
+            .card-slider { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .nav-links { display: none; }
+            .card-slider { grid-template-columns: 1fr; }
+            .hero-title { font-size: 32px; }
+            .section { padding: 50px 20px; }
+            .about-wrap { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow" style="top: 10%; left: -10%;"></div>
+    <div class="bg-glow" style="bottom: 10%; right: -10%; background: #00D2FF;"></div>
+
+    <nav>
+        <div class="nav-logo">ZEPHYR</div>
+        <div class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#about">资料</a>
+            <a href="#works">作品</a>
+            <a href="#music">舞台</a>
+            <a href="#direct">直拍</a>
+            <a href="#news">动态</a>
+        </div>
+    </nav>
+
+    <section class="hero-banner" id="home">
+        <p class="hero-sub">MODYSSEY | BOYSTORY</p>
+        <h1 class="hero-title">ZEPHYR 李梓豪</h1>
+        
+        <div class="hero-info">
+            <span>2004.10.22</span>
+            <span>天秤座</span>
+            <span>天津</span>
+            <span>ENFP</span>
+            <span>🌰栗子</span>
+        </div>
+        <div class="quick-links">
+            <a href="#music" class="quick-btn">HAOshTag</a>
+            <a href="#direct" class="quick-btn">直拍指路</a>
+            <a href="#works" class="quick-btn">舞台专区</a>
+        </div>
+    </section>
+
+    <section class="section" id="about">
+        <h2 class="section-title">个人资料</h2>
+        <div class="about-wrap">
+            <div class="about-basic">
+                <p><span>本名：</span>李梓豪</p>
+                <p><span>英文名：</span>Zephyr / Zihao Li</p>
+                <p><span>小名：</span>祺祺 / 栗子</p>
+                <p><span>生日：</span>2004.10.22 | 天秤座</p>
+                <p><span>籍贯：</span>天津</p>
+                <p><span>所属：</span>MODYSSEY、BOYSTORY</p>
+                <p><span>MBTI：</span>ENFP</p>
+                <p><span>语言：</span>中文、英文、韩文、日文</p>
+                <p><span>座右铭：</span>不能比粉丝先放弃。</p>
+            </div>
+            <div class="about-story">
+                <h3>成长历程</h3>
+                <p>3岁开始接触舞蹈，从小展现超强舞蹈天赋，深耕舞蹈多年，熟练掌握8种舞种；早年加入BOYSTORY开启演艺之路，凭借扎实舞台功底圈粉无数；后参加《Boys Planet》收获超高人气，最终加入MODYSSEY全新出发，兼顾舞台表现力与创作能力，是团内实力与活力担当，一路坚守热爱，稳步成长为全能偶像。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="works">
+        <h2 class="section-title">作品专区</h2>
+        <div class="card-group">
+            <div class="card" onclick="window.open('https://space.bilibili.com/','_blank')">
+                <img src="https://picsum.photos/id/1080/600/338" alt="作品封面">
+                <div class="card-body">
+                    <h3 class="card-title-sm">MODYSSEY 主打舞台</h3>
+                    <p class="card-desc">官方舞台 / 高清完整版</p>
+                    <a href="https://space.bilibili.com/" target="_blank" class="card-link">前往观看 →</a>
+                </div>
+            </div>
+            <div class="card" onclick="window.open('https://space.bilibili.com/','_blank')">
+                <img src="https://picsum.photos/id/1080/600/338" alt="作品封面">
+                <div class="card-body">
+                    <h3 class="card-title-sm">舞蹈 Cover 合集</h3>
+                    <p class="card-desc">翻跳精选 / 实力展现</p>
+                    <a href="https://space.bilibili.com/" target="_blank" class="card-link">前往观看 →</a>
+                </div>
+            </div>
+            <div class="card" onclick="window.open('https://space.bilibili.com/','_blank')">
+                <img src="https://picsum.photos/id/1080/600/338" alt="作品封面">
+                <div class="card-body">
+                    <h3 class="card-title-sm">原创编舞作品</h3>
+                    <p class="card-desc">个人编舞 / 练习室版</p>
+                    <a href="https://space.bilibili.com/" target="_blank" class="card-link">前往观看 →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="music">
+    <h2 class="section-title">HAOshTag</h2>
+    <div class="card-slider">
+        <a class="slider-card" href=" " target="_blank" 
+           style="background-image: url('name1.jpg');">
+            <div class="card-caption">Mixtape Track.01 《那么近那么远》</div>
+        </a >
+        <a class="slider-card" href="https://www.bilibili.com/" target="_blank" 
+           style="background-image: url('lu2.jpg');">
+            <div class="card-caption">#HAOshTag Mixtape Track.01 《那么近那么远》</div>
+        </a >
+        <a class="slider-card" href="https://www.bilibili.com/" target="_blank" 
+           style="background-image: url('love3.jpg');">
+            <div class="card-caption">Mixtape Track.03 《爱=LOVE SICK》</div>
+        </a >
+        <a class="slider-card" href="https://www.bilibili.com/" target="_blank" 
+           style="background-image: url('king4.jpg');">
+            <div class="card-caption">Mixtape Track.04《K1ng in this R00M》</div>
+        </a >
+        <a class="slider-card" href="https://www.bilibili.com/" target="_blank" 
+           style="background-image: url('luv.jpg');">
+            <div class="card-caption">Mixtape Track.05《Luv Urself》</div>
+        </a >
+        <a class="slider-card" href="https://www.bilibili.com/" target="_blank" 
+           style="background-image: url('xue6.jpg');">
+            <div class="card-caption">Mixtape Track.06《雪 Snow》</div>
+        </a >
+    </div>
+</section>
+
+    <section class="section" id="direct">
+        <h2 class="section-title">直拍指路</h2>
+        <div class="direct-wrap">
+            <div class="direct-box">
+                <h3>🔥 主打直拍</h3>
+                <ul class="direct-list">
+                    <li><a href="https://www.bilibili.com/" target="_blank">MODYSSEY 主打官方直拍</a></li>
+                    <li><a href="https://www.bilibili.com/" target="_blank">音乐银行直拍</a></li>
+                    <li><a href="https://www.bilibili.com/" target="_blank">人气歌谣直拍</a></li>
+                </ul>
+            </div>
+            <div class="direct-box">
+                <h3>⭐ 经典舞台</h3>
+                <ul class="direct-list">
+                    <li><a href="https://www.bilibili.com/" target="_blank">Boys Planet 直拍</a></li>
+                    <li><a href="https://www.bilibili.com/" target="_blank">Solo 舞蹈直拍</a></li>
+                    <li><a href="https://www.bilibili.com/" target="_blank">演唱会高清直拍</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="news">
+        <h2 class="section-title">最新动态</h2>
+        <div class="news-list">
+            <div class="news-item" onclick="window.open('https://weibo.com/','_blank')" style="cursor:pointer">
+                <div class="news-date">2026.03.26</div>
+                <div>
+                    <div style="font-weight:bold">MODYSSEY 全球巡演日程正式开启</div>
+                    <div style="font-size:13px; color:var(--text-mute)">首站定档，李梓豪将带来全新 Solo 舞台</div>
+                </div>
+            </div>
+            <div class="news-item" onclick="window.open('https://space.bilibili.com/','_blank')" style="cursor:pointer">
+                <div class="news-date">NEW</div>
+                <div>
+                    <div style="font-weight:bold">个人舞蹈工作室系列视频更新</div>
+                    <div style="font-size:13px; color:var(--text-mute)">Bilibili 高清同步上线，解锁硬核舞技</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p class="footer-copy">© 2026 ZEPHYR FANBASE | 仅供粉丝交流使用</p>
+    </footer>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
